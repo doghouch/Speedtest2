@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Speedtest</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/devextreme/21.2.7/js/dx.all.js"></script>
+        <script src="assets/speedtest.js"></script>
+
+        <!-- css -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=albert-sans:400,500,600,700" rel="stylesheet" />
+        <link rel="stylesheet" href="assets/speedtest.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0-beta1/css/bootstrap.min.css" />
+    </head>
+    <body>
+        <div class="content">
+            <div class="gauge-container">
+                <div class="gauge"></div>
+            </div>
+            
+            <a class="start-btn">Start Test</a>
+        
+            <br><br>
+            
+            <p style="color:white; display: none" class="speed-line"><span style="font-weight:700" class="speed">0.00</span></p>
+            
+            <footer>
+                <p>Credits: <a href="http://brunocarvalho.me/" target="_blank">Bruno C.</a> for the gauge. Total data used: <span class="data-used">0.00</span> GB.</p>    
+            </footer>
+        </div>
+        
+        
+        
+        
+        <svg width="0" height="0" version="1.1" class="gradient-mask" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+            
+                <linearGradient gradientTransform="rotate(90)" id="lineGradient">
+                    <stop offset="0%" stop-opacity="0" stop-color="#fff" />
+                    <stop offset="100%" stop-color="#fff" />
+                </linearGradient>
+                
+
+                <linearGradient id="gradientGauge">
+                    <stop stop-color="#756cba" offset="0%"/>
+                    <stop stop-color="#b4adf0" offset="100%"/>
+                </linearGradient>
+            </defs>  
+        </svg>
+    </body>
+</html>
