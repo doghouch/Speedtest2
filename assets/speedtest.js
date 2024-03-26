@@ -1,300 +1,237 @@
 const TEST_URL = "https://cachefly.cachefly.net/100mb.test";
 var testInProgress = false;
 var totalDownloadedGlobally = 0.0;
-
-$(function () {
-
-   $(".start-btn").click(function () {
-      startTest();
-   });
-
-   class GaugeChart {
-      constructor(element, params) {
-         this._element = element;
-         this._initialValue = params.initialValue;
-         this._higherValue = params.higherValue;
-         this._title = params.title;
-         this._subtitle = params.subtitle;
-      }
-
-      _buildConfig() {
-         let element = this._element;
-
-         return {
-            value: this._initialValue,
-
-            valueIndicator: {
-               type: 'rectangle',
-               width: 10,
-            },
-            geometry: {
-               startAngle: 185,
-               endAngle: 355
-            },
-            scale: {
-               startValue: 0,
-               offset: 0,
-               endValue: 500,
-               customTicks: [0, 100, 200, 300, 400, 500],
-               tick: {
-                  length: 6
-               },
-               label: {
-                  font: {
-                     color: '#87959f',
-                     size: 12,
-                     family: 'Albert Sans,sans-serif'
-                  }
-               }
-            },
-            title: {
-               verticalAlignment: 'bottom',
-               text: this._title,
-               font: {
-                    family: 'Albert Sans,sans-serif',
-                    color: '#fff',
-                    size: 12
-               },
-               subtitle: {
-                  text: this._subtitle,
-                  font: {
-                    family: 'Albert Sans,sans-serif',
-                    color: '#fff',
-                    weight: 700,
-                    size: 30
-                  }
-               }
-            },
-            onInitialized: function () {
-               let currentGauge = $(element);
-               let circle = currentGauge.find('.dxg-spindle-hole').clone();
-               let border = currentGauge.find('.dxg-spindle-border').clone();
-
-               currentGauge.find('.dxg-title text').first().attr('y', 48);
-               currentGauge.find('.dxg-title text').last().attr('y', 28);
-               currentGauge.find('.dxg-value-indicator').append(border, circle);
-            }
-
-         }
-      }
-
-      init() {
-         $(this._element).dxCircularGauge(this._buildConfig());
-      }
-   }
-
-   let params = {
-      initialValue: 0,
-
-      higherValue: 200,
-      title: `Megabit/s`,
-      subtitle: '0.00'
-   };
-
-   let gauge = new GaugeChart($(".gauge"), params);
-   gauge.init();
-
-   if (localStorage.getItem("totalBw") === null) {
-      localStorage.setItem("totalBw", 0);
-   }
-   totalDownloadedGlobally = parseInt(localStorage.getItem("totalBw"));
+var speedSteps = [0, 5, 10, 20, 50, 75, 100];
 
 
-   $(".data-used").html(parseFloat(totalDownloadedGlobally / 1000000 / 1000).toFixed(2));
-});
+function linearMap(xMin, xMax, yMin, yMax, speed) {
+    var slope = (yMax - yMin) / (xMax - xMin);
+    var intercept = yMin - slope * xMin;
+    return slope * speed + intercept;
+}
 
-function resetStroke(ticks, elems) {
-   ticks.forEach(e => {
-      e.css({
-         stroke: 'rgba(255, 255, 255, 0.25)'
-      });
-   });
-   elems.forEach(e => {
-      e.css({
-         fill: '#87959f'
-      });
-   });
+function getSpeedAngle(speed) {
+    // piecewise function 
+    /*
+        0 Mbps -> -123 deg
+        5 Mbps -> -82
+        10 Mbps -> -41
+        20 Mbps -> 0 deg
+        50 Mbps -> 41
+        75 Mbps -> 82
+        100 Mbps -> 123 deg
+    */
+
+    if (speed <= 5) {
+        return linearMap(0, 5, -123, -82, speed);
+
+    } else if (speed <= 10) {
+        return linearMap(5, 10, -82, -41, speed);
+
+    } else if (speed <= 20) {
+        return linearMap(10, 20, -41, 0, speed);
+
+    } else if (speed <= 50) {
+        return linearMap(20, 50, 0, 41, speed);
+
+    } else if (speed <= 75) {
+        return linearMap(50, 75, 41, 82, speed);
+
+    } else {
+        if (speed > 100) {
+            return 123;
+        }
+        return linearMap(0, 100, 82, 123, speed);
+    }
+}
+
+function setSpeed(speed) {
+    var angle = getSpeedAngle(speed);
+    $("#stick").css("transform", "rotate(" + angle + "deg) translateX(153px) translateY(45px)");
+    $("#speed-text").text(Number.parseFloat(speed).toFixed(2));
+
+    for (var i = 0; i < speedSteps.length; i++) {
+        if (speed >= speedSteps[i]) {
+            $("#speed-" + speedSteps[i]).addClass("active-speed");
+        } else {
+            $("#speed-" + speedSteps[i]).removeClass("active-speed");
+        }
+    }
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+$(document).ready(function() {
 
-function generate_random_data(size) {
-   return new Blob([new ArrayBuffer(size)], {
-      type: 'application/octet-stream'
-   });
-}
+    $(".start-btn").click(function () {
+        startTest();
+    });
 
-function startTest() {
-   if (testInProgress) {
-      return;
-   }
+    if (localStorage.getItem("totalBw") === null) {
+        localStorage.setItem("totalBw", 0);
+    }
+    totalDownloadedGlobally = parseInt(localStorage.getItem("totalBw"));
 
-   let connectionFailed = false;
 
-   let totalTests = 0;
-   let stopTests = false;
-   // wait for the last test to complete before showing results (not guaranteed; if the while loop executes in between a transition between
-   // false -> true, we will be in sh*t)
-   let waitForMe = false;
-   let firstRun = false;
-   let dlSpeedFinal = 0;
-   let totalDownloaded = 0;
-   let startDate = new Date();
+    $(".data-used").html(parseFloat(totalDownloadedGlobally / 1000000 / 1000).toFixed(2));
+    
+})
 
-   const controller = new AbortController();
 
-   testInProgress = true;
+async function startTest() {
+    if (testInProgress) {
+        return;
+    }
 
-   $(".start-btn").prop('disabled', true);
+    $(".gauge").addClass("run");
+    testInProgress = true;
 
-   $(".speed-line").fadeOut(function () {
-      $(".start-btn").fadeOut();
-   });
+    $("#test-type").addClass("blinking");
+    $("#test-type").text("Connecting...");
 
-   async function main(curr) {
+    $(".start-btn").prop('disabled', true);
 
-      const signal = controller.signal;
+    $(".speed-line").fadeOut(function () {
+        $(".start-btn").fadeOut();
+    });
 
-      const response = await fetch(TEST_URL + '?v=' + (Math.floor(new Date().getTime() / 1000)), {
-         signal: controller.signal
-      });
+    await sleep(3000);
 
-      if (firstRun) {
-         // deal with the delay between the first request and actual progress
-         startDate = new Date();
-         firstRun = false;
-      }
+    $("#test-type").removeClass("blinking");
+    $("#test-type").text("Mbps (+0)");
 
-      const contentLength = response.headers.get('content-length');
-      const total = parseInt(contentLength, 10);
-      let loaded = 0;
-      totalTests++;
-      const res = new Response(new ReadableStream({
+    
+    await sleep(1000);
 
-         async start(controller) {
 
-            const reader = response.body.getReader();
-            for (;;) {
-               const {
-                  done,
-                  value
-               } = await reader.read();
-               if (done) break;
-               if (stopTests) controller.abort();
-               loaded += value.byteLength;
-               totalDownloadedGlobally += value.byteLength;
-               totalDownloaded += value.byteLength;
-               controller.enqueue(value);
+    let connectionFailed = false;
+
+    let totalTests = 0;
+    let stopTests = false;
+    // wait for the last test to complete before showing results (not guaranteed; if the while loop executes in between a transition between
+    // false -> true, we will be in sh*t)
+    let waitForMe = false;
+    let firstRun = false;
+    let dlSpeedFinal = 0;
+    let totalDownloaded = 0;
+    let startDate = new Date();
+
+    const controller = new AbortController();
+
+    
+    async function main(curr) {
+
+        const signal = controller.signal;
+
+        const response = await fetch(TEST_URL + '?v=' + (Math.floor(new Date().getTime() / 1000)), {
+            signal: controller.signal
+        });
+
+        if (firstRun) {
+            // deal with the delay between the first request and actual progress
+            startDate = new Date();
+            firstRun = false;
+        }
+
+        const contentLength = response.headers.get('content-length');
+        const total = parseInt(contentLength, 10);
+        let loaded = 0;
+        totalTests++;
+        const res = new Response(new ReadableStream({
+
+            async start(controller) {
+
+                const reader = response.body.getReader();
+                for (;;) {
+                const {
+                    done,
+                    value
+                } = await reader.read();
+                if (done) break;
+                if (stopTests) controller.abort();
+                loaded += value.byteLength;
+                totalDownloadedGlobally += value.byteLength;
+                totalDownloaded += value.byteLength;
+                controller.enqueue(value);
+                }
+                controller.stop();
+                return;
+            },
+        }));
+
+        try {
+            const blob = await res.blob();
+
+        } catch {
+
+        }
+        totalTests--;
+    }
+
+
+    async function trackTest() {
+
+        waitForMe = true;
+        while (!stopTests) {
+            await main(totalTests);
+        }
+        waitForMe = false;
+    }
+
+    async function runTest() {
+        totalDownloaded = 0;
+        firstRun = true;
+
+        for (let i = 0; i < 3; i++) {
+            trackTest();
+        }
+
+        while ((((new Date()).getTime() - startDate.getTime()) / 1000 < 12 && waitForMe)) {
+            let mb = totalDownloaded / 1000000;
+            let str = "Mbps (+" + totalTests + ")";
+            let gb = totalDownloadedGlobally / 1000000 / 1000;
+            dlSpeedFinal = mb / (((new Date()).getTime() - startDate.getTime()) / 1000) * 8 + "";
+            if (dlSpeedFinal < 100) {
+                setSpeed(dlSpeedFinal);
+            } else if (dlSpeedFinal < 1000) {
+                setSpeed(dlSpeedFinal);
+            } else {
+                setSpeed(dlSpeedFinal);
             }
-            controller.stop();
-            return;
-         },
-      }));
+            $(".data-used").html(parseFloat(gb + "").toFixed(2));
+            if ($("#test-type").html() != str) {
+                $("#test-type").html(str);
+            }
+            await sleep(50);
+        }
 
-      try {
-         const blob = await res.blob();
+        localStorage.setItem("totalBw", totalDownloadedGlobally);
 
-      } catch {
+        controller.abort();
+        stopTests = true;
 
-      }
-      totalTests--;
-   }
+        if (connectionFailed) {
+            $(".speed").html("Connection failed");
+        } else {
+            $(".speed").html("Your speed: " + parseFloat(dlSpeedFinal + "").toFixed(2) + " Mbps");
+        }
 
+        await sleep(1000);
 
-   async function trackTest() {
+        // end of test
 
-      waitForMe = true;
-      while (!stopTests) {
-         await main(totalTests);
-      }
-      waitForMe = false;
-   }
+        setSpeed(0.00);
 
-   async function runTest() {
-      totalDownloaded = 0;
-      firstRun = true;
+        for (var i = 0; i < speedSteps.length; i++) {
+            $("#speed-" + speedSteps[i]).removeClass("active-speed");
+        }
 
-      for (let i = 0; i < 3; i++) {
-         trackTest();
-      }
+        $(".start-btn").fadeIn();
+        $(".speed-line").fadeIn();
+        $(".start-btn").prop('disabled', false);
+        $("#test-type").text("Mbps");
+        testInProgress = false;
+    }
 
-      while ((((new Date()).getTime() - startDate.getTime()) / 1000 < 12 && waitForMe)) {
-         let mb = totalDownloaded / 1000000;
-         let str = "Megabit/s (+" + totalTests + ")";
-         let gb = totalDownloadedGlobally / 1000000 / 1000;
-         dlSpeedFinal = parseFloat(mb / (((new Date()).getTime() - startDate.getTime()) / 1000) * 8 + "").toFixed(2);
-         if (dlSpeedFinal < 100) {
-            setValue(parseFloat(dlSpeedFinal + "").toFixed(2));
-         } else if (dlSpeedFinal < 1000) {
-            setValue(parseFloat(dlSpeedFinal + "").toFixed(1));
-         } else {
-            setValue(Math.round(dlSpeedFinal));
-         }
-         $(".data-used").html(parseFloat(gb + "").toFixed(2));
-         if ($(".dxg-title text:first-child").html() != str) {
-            $(".dxg-title text:first-child").html(str);
-         }
-         await sleep(50);
-      }
-
-      localStorage.setItem("totalBw", totalDownloadedGlobally);
-
-      controller.abort();
-      stopTests = true;
-
-      if (connectionFailed) {
-         $(".speed").html("Connection failed");
-      } else {
-         $(".speed").html("Your speed: " + parseFloat(dlSpeedFinal + "").toFixed(2) + " Mbps");
-      }
-
-      await sleep(500);
-
-      // end of test
-
-      setValue("0.00");
-
-      $(".dxg-title text:first-child").fadeOut(function () {
-         $(".dxg-title text:first-child").html("Megabit/s");
-         $(".dxg-title text:first-child").fadeIn();
-      });
-
-
-      $(".start-btn").fadeIn();
-      $(".speed-line").fadeIn();
-      $(".start-btn").prop('disabled', false);
-      testInProgress = false;
-   }
-
-   runTest();
-}
-
-function setValue(val) {
-   let ticks = [$(".dxg-line path:nth-child(1)"), $(".dxg-line path:nth-child(2)"),
-      $(".dxg-line path:nth-child(3)"), $(".dxg-line path:nth-child(4)"),
-      $(".dxg-line path:nth-child(5)"), $(".dxg-line path:nth-child(6)")
-   ];
-   let elems = [$(".dxg-elements text:nth-child(1)"), $(".dxg-elements text:nth-child(2)"),
-      $(".dxg-elements text:nth-child(3)"), $(".dxg-elements text:nth-child(4)"),
-      $(".dxg-elements text:nth-child(5)"), $(".dxg-elements text:nth-child(6)")
-   ];
-   let gauge = $(".gauge").dxCircularGauge('instance');
-   let gaugeElement = $(gauge._$element[0]);
-
-   resetStroke(ticks, elems);
-
-   for (let i = 0; i < ticks.length; i++) {
-      // set ticks to white if speed of 100 * i is reached
-      if (val >= (i * 100)) {
-         ticks[i].css({
-            stroke: 'rgba(255, 255, 255, 1)'
-         });
-         elems[i].css({
-            fill: '#fff'
-         });
-      }
-   }
-   gaugeElement.find('.dxg-title text').last().html(`${val}`);
-   gauge.value(val);
-}
+        runTest();
+    }
