@@ -1,6 +1,15 @@
 # Speedtest2
 Open-source speedtest written in pure HTML/CSS/JS.
 
+# Changelog
+
+- 3/27/2024: Initial Release
+
+# Known Bugs
+
+- There is an issue in Safari/WebKit-based browsers where SVG scaling does not work properly alongside `transform-origin`.
+  - Given that it has been broken for so long, a workaround will need to be found (TBD)
+
 # Configuration
 
 The only thing you need to configure is the following line:
