@@ -1,68 +1,59 @@
 <!DOCTYPE html> 
 <html>
-    <head>
-        <title>Home</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <link href="https://fonts.bunny.net/css?family=albert-sans:400,500,600,700|montserrat:700,800,900" rel="stylesheet" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-        <link rel="stylesheet" href="assets/speedtest.css" />
-        <script src="assets/speedtest.js"></script>
-
-    </head>
-    <body>
-        <div class="content">
-            <div class="speedtest-area">
-                <!-- Created with Keyshape -->
-                <svg class="gauge" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" text-rendering="geometricPrecision" shape-rendering="geometricPrecision" style="white-space: pre; background: rgba(0,0,0,0.00);">
-                    <defs>
-                        <linearGradient id="Gradient-0" x1="6.2578" y1="0" x2="6.2578" y2="79.7882" gradientUnits="userSpaceOnUse">
-                            <stop offset="0" stop-color="#ffffff" stop-opacity="0.5"/>
-                            <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.1"/>
-                            <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-                        </linearGradient>
-                        <linearGradient id="Gradient-1" x1="0" y1="0" x2="250%" y2="0%"  gradientUnits="userSpaceOnUse">
-                            <stop offset="0%" stop-color="#0074c7" stop-opacity="1" />
-                            <stop offset="10%" stop-color="#19d4d1" stop-opacity="1" />
-                            <stop offset="100%" stop-color="#00ffd5" stop-opacity="1" />
-                        </linearGradient>
-                        
-                        <mask id="Mask-1">
-                            <path fill="#dddddd" stroke="none" d="M131.5,44.242C131.5,88.721,122.807,90.2595,96,76.8561C93.648,75.6801,71.8616,64.7182,70,63.8561C62.3639,60.3195,65.9303,62.9226,60,59.8561C40.0636,49.5471,23.0692,40.4097,0,44.242C-23.1709,48.0912,-38.133,46.7133,-67,62.8561C-73.1233,66.2803,-88,76.0436,-95,80.8561C-134.6,108.081,-138.296,106.676,-131.5,44.242C-122.671,-36.8746,-72.6254,-96.1439,0,-96.1439C72.6254,-96.1439,131.5,-37.3537,131.5,44.242Z" transform="translate(2.5,-1.3561) translate(-2.5,-16.5)"/>
-                        </mask>
-                        <mask id="Mask-2">
-                            <path fill="#dddddd" stroke="none" d="M131.5,44.242C131.5,125.838,72.6254,44.242,0,44.242C-72.6254,44.242,-131.5,125.838,-131.5,44.242C-131.5,-37.3537,-72.6254,-96.1439,0,-96.1439C72.6254,-96.1439,131.5,-37.3537,131.5,44.242Z" transform="translate(2.5,-1.3561) translate(-2.5,-16.5)"/>
-                        </mask>
-                    </defs>
-                    <path id="baseGuage" fill="none" stroke="url(#Gradient-1)" stroke-width="20" d="M100,0C100,55.2285,55.2285,100,0,100C-55.2285,100,-100,55.2285,-100,0C-100,-28.1665,-88.3549,-53.6132,-69.6167,-71.7882C-51.6132,-89.2504,-27.062,-100,0,-100C32.6953,-100,61.7257,-84.3092,79.972,-60.047C92.5472,-43.3257,100,-22.5332,100,0Z" fill-rule="evenodd" mask="url(#Mask-1)" transform="translate(160,120)"/>
-                    <text fill="#ffffff" id="speed-text" font-size="22" letter-spacing="0" word-spacing="0" stroke="none" text-anchor="middle" font-weight="500" transform="translate(160,200)" style="line-height: 16px;">0.00</text>
-                    <text fill="#999999" id="test-type" font-size="12" letter-spacing="0" word-spacing="0" stroke="none" text-anchor="middle" font-weight="400" transform="translate(160,220)" style="line-height: 16px;">Mbps</text>
-                    <text id="speed-0" fill="#999999" font-size="14" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" font-weight="700" transform="translate(90.3833,163)" style="line-height: 16px;">0</text>
-                    <text id="speed-20" fill="#999999" font-size="14" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" font-weight="700" transform="translate(160,48.9318)" style="line-height: 16px; white-space: pre;">20</text>
-                    <text id="speed-100" fill="#999999" font-size="14" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" font-weight="700" transform="translate(220.383,163)" style="line-height: 16px; white-space: pre;">100</text>
-                    <text id="speed-10" fill="#999999" font-size="14" font-weight="700" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" transform="translate(109,72)" style="line-height: 16px;">10</text>
-                    <text id="speed-5" fill="#999999" font-size="14" font-weight="700" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" transform="translate(83.4224,114)" style="line-height: 16px;">5</text>
-                    <text id="speed-50" fill="#999999" font-size="14" font-weight="700" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" transform="translate(209.833,72)" style="line-height: 16px; white-space: pre;">50</text>
-                    <text id="speed-75" fill="#999999" font-size="14" font-weight="700" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" transform="translate(232.317,114)" style="line-height: 16px; white-space: pre;">75</text>
-                    
-                    <g id="stick" transform="translate(159.242,65.25) translate(-8.99999,-54.75)">
-                        <path fill="url(#Gradient-0)" stroke="none" d="M0,0L13.2578,0L15.2578,79.7882L-2.74219,79.7882Z" />
-                        <path d="M0,-10L0,-29.7118" stroke="#FFF" opacity="0" fill="none" stroke-linecap="square" transform="translate(6,-5)"/>
-                    </g>                </svg>
-                <a class="start-btn">Start Test</a>
-
-                <br><br>
-                
-                <p style="color:white; display: none" class="speed-line"><span style="font-weight:700" class="speed">0.00</span></p>
-                
-                
-            </div>
-            
-        </div>
-        <footer>
-            <p>Total data used: <span class="data-used">0.00</span> GB.</p>    
-        </footer>
-    </body>
+	<head>
+		<title>Home</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<link href="https://fonts.bunny.net/css?family=albert-sans:400,500,600,700|montserrat:700,800,900" rel="stylesheet" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<link rel="stylesheet" href="assets/speedtest.css" />
+		<script src="assets/speedtest.js"></script>
+	</head>
+	<body>
+		<div class="content">
+			<div class="speedtest-area">
+				<!-- Created with Keyshape -->
+				<svg class="gauge" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" text-rendering="geometricPrecision" shape-rendering="geometricPrecision" style="white-space: pre; background: rgba(0,0,0,0.00);">
+					<defs>
+						<linearGradient id="Gradient-0" x1="6.2578" y1="0" x2="6.2578" y2="79.7882" gradientUnits="userSpaceOnUse">
+							<stop offset="0" stop-color="#ffffff" stop-opacity="0.5"/>
+							<stop offset="0.5" stop-color="#ffffff" stop-opacity="0.1"/>
+							<stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+						</linearGradient>
+						<linearGradient id="Gradient-1" x1="0" y1="0" x2="250%" y2="0%"  gradientUnits="userSpaceOnUse">
+							<stop offset="0%" stop-color="#0074c7" stop-opacity="1" />
+							<stop offset="10%" stop-color="#19d4d1" stop-opacity="1" />
+							<stop offset="100%" stop-color="#00ffd5" stop-opacity="1" />
+						</linearGradient>
+						<mask id="Mask-1">
+							<path fill="#dddddd" stroke="none" d="M131.5,44.242C131.5,88.721,122.807,90.2595,96,76.8561C93.648,75.6801,71.8616,64.7182,70,63.8561C62.3639,60.3195,65.9303,62.9226,60,59.8561C40.0636,49.5471,23.0692,40.4097,0,44.242C-23.1709,48.0912,-38.133,46.7133,-67,62.8561C-73.1233,66.2803,-88,76.0436,-95,80.8561C-134.6,108.081,-138.296,106.676,-131.5,44.242C-122.671,-36.8746,-72.6254,-96.1439,0,-96.1439C72.6254,-96.1439,131.5,-37.3537,131.5,44.242Z" transform="translate(2.5,-1.3561) translate(-2.5,-16.5)"/>
+						</mask>
+						<mask id="Mask-2">
+							<path fill="#dddddd" stroke="none" d="M131.5,44.242C131.5,125.838,72.6254,44.242,0,44.242C-72.6254,44.242,-131.5,125.838,-131.5,44.242C-131.5,-37.3537,-72.6254,-96.1439,0,-96.1439C72.6254,-96.1439,131.5,-37.3537,131.5,44.242Z" transform="translate(2.5,-1.3561) translate(-2.5,-16.5)"/>
+						</mask>
+					</defs>
+					<path id="baseGuage" fill="none" stroke="url(#Gradient-1)" stroke-width="20" d="M100,0C100,55.2285,55.2285,100,0,100C-55.2285,100,-100,55.2285,-100,0C-100,-28.1665,-88.3549,-53.6132,-69.6167,-71.7882C-51.6132,-89.2504,-27.062,-100,0,-100C32.6953,-100,61.7257,-84.3092,79.972,-60.047C92.5472,-43.3257,100,-22.5332,100,0Z" fill-rule="evenodd" mask="url(#Mask-1)" transform="translate(160,120)"/>
+					<text fill="#ffffff" id="speed-text" font-size="22" letter-spacing="0" word-spacing="0" stroke="none" text-anchor="middle" font-weight="500" transform="translate(160,200)" style="line-height: 16px;">0.00</text>
+					<text fill="#999999" id="test-type" font-size="12" letter-spacing="0" word-spacing="0" stroke="none" text-anchor="middle" font-weight="400" transform="translate(160,220)" style="line-height: 16px;">Mbps</text>
+					<text id="speed-0" fill="#999999" font-size="14" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" font-weight="700" transform="translate(90.3833,163)" style="line-height: 16px;">0</text>
+					<text id="speed-20" fill="#999999" font-size="14" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" font-weight="700" transform="translate(160,48.9318)" style="line-height: 16px; white-space: pre;">20</text>
+					<text id="speed-100" fill="#999999" font-size="14" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" font-weight="700" transform="translate(220.383,163)" style="line-height: 16px; white-space: pre;">100</text>
+					<text id="speed-10" fill="#999999" font-size="14" font-weight="700" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" transform="translate(109,72)" style="line-height: 16px;">10</text>
+					<text id="speed-5" fill="#999999" font-size="14" font-weight="700" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" transform="translate(83.4224,114)" style="line-height: 16px;">5</text>
+					<text id="speed-50" fill="#999999" font-size="14" font-weight="700" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" transform="translate(209.833,72)" style="line-height: 16px; white-space: pre;">50</text>
+					<text id="speed-75" fill="#999999" font-size="14" font-weight="700" letter-spacing="0" word-spacing="0" text-anchor="middle" stroke="none" transform="translate(232.317,114)" style="line-height: 16px; white-space: pre;">75</text>
+					<g id="stick" transform="translate(159.242,65.25) translate(-8.99999,-54.75)">
+						<path fill="url(#Gradient-0)" stroke="none" d="M0,0L13.2578,0L15.2578,79.7882L-2.74219,79.7882Z" />
+						<path d="M0,-10L0,-29.7118" stroke="#FFF" opacity="0" fill="none" stroke-linecap="square" transform="translate(6,-5)"/>
+					</g>
+				</svg>
+				<a class="start-btn">Start Test</a>
+				<br><br>
+				<p style="color:white; display: none" class="speed-line"><span style="font-weight:700" class="speed">0.00</span></p>
+			</div>
+		</div>
+		<footer>
+			<p>Total data used: <span class="data-used">0.00</span> GB.</p>
+		</footer>
+	</body>
 </html>
