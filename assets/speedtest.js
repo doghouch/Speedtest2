@@ -63,7 +63,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 $(document).ready(function() {
 
-    $(".start-btn").click(function () {
+    $(".start-btn").click(function() {
         startTest();
     });
 
@@ -74,9 +74,8 @@ $(document).ready(function() {
 
 
     $(".data-used").html(parseFloat(totalDownloadedGlobally / 1000000 / 1000).toFixed(2));
-    
-})
 
+})
 
 async function startTest() {
     if (testInProgress) {
@@ -91,7 +90,7 @@ async function startTest() {
 
     $(".start-btn").prop('disabled', true);
 
-    $(".speed-line").fadeOut(function () {
+    $(".speed-line").fadeOut(function() {
         $(".start-btn").fadeOut();
     });
 
@@ -100,9 +99,7 @@ async function startTest() {
     $("#test-type").removeClass("blinking");
     $("#test-type").text("Mbps (+0)");
 
-    
     await sleep(1000);
-
 
     let connectionFailed = false;
 
@@ -118,7 +115,6 @@ async function startTest() {
 
     const controller = new AbortController();
 
-    
     async function main(curr) {
 
         const signal = controller.signal;
@@ -143,16 +139,16 @@ async function startTest() {
 
                 const reader = response.body.getReader();
                 for (;;) {
-                const {
-                    done,
-                    value
-                } = await reader.read();
-                if (done) break;
-                if (stopTests) controller.abort();
-                loaded += value.byteLength;
-                totalDownloadedGlobally += value.byteLength;
-                totalDownloaded += value.byteLength;
-                controller.enqueue(value);
+                    const {
+                        done,
+                        value
+                    } = await reader.read();
+                    if (done) break;
+                    if (stopTests) controller.abort();
+                    loaded += value.byteLength;
+                    totalDownloadedGlobally += value.byteLength;
+                    totalDownloaded += value.byteLength;
+                    controller.enqueue(value);
                 }
                 controller.stop();
                 return;
@@ -167,7 +163,6 @@ async function startTest() {
         }
         totalTests--;
     }
-
 
     async function trackTest() {
 
@@ -233,5 +228,5 @@ async function startTest() {
         testInProgress = false;
     }
 
-        runTest();
-    }
+    runTest();
+}
