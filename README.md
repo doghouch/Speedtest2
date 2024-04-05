@@ -1,6 +1,8 @@
 # Speedtest2
 Open-source speedtest written in pure HTML/CSS/JS.
 
+Demo: https://home.srv.elde.st/Speedtest
+
 # Changelog
 
 - 3/27/2024: Initial Release
